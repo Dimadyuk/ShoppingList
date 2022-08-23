@@ -36,7 +36,7 @@ class ShopItemFragment() : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Log.d("Fragment", "onAttach")
-        if (context is OnEditingFinishedListener){
+        if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
         } else {
             throw RuntimeException("Activity must implement OnEditingFinishedListener")
@@ -111,6 +111,7 @@ class ShopItemFragment() : Fragment() {
             } else {
                 null
             }
+            val array = arrayListOf<Int>()
             tilCount.error = massage
         }
 
