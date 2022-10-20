@@ -4,31 +4,20 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.shoppinglist.R
 import com.example.shoppinglist.databinding.FragmentShopItemBinding
 import com.example.shoppinglist.domain.ShopItem
-import com.google.android.material.textfield.TextInputLayout
-import java.lang.RuntimeException
+import javax.inject.Inject
 
 class ShopItemFragment() : Fragment() {
 
     private lateinit var viewModel: ShopItemViewModel
 
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
-
-//    private lateinit var tilName: TextInputLayout
-//    private lateinit var tilCount: TextInputLayout
-//    private lateinit var etName: EditText
-//    private lateinit var etCount: EditText
-//    private lateinit var buttonSave: Button
 
     private var _binding: FragmentShopItemBinding? = null
     private val binding: FragmentShopItemBinding
@@ -37,8 +26,17 @@ class ShopItemFragment() : Fragment() {
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as ShopApplication).component
+    }
 
     override fun onAttach(context: Context) {
+
+        component.inject(this)
+
         super.onAttach(context)
         //Log.d("Fragment", "onAttach")
         if (context is OnEditingFinishedListener) {
@@ -59,13 +57,13 @@ class ShopItemFragment() : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       // Log.d("Fragment", "onCreate")
+        // Log.d("Fragment", "onCreate")
         parseParams()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         //initViews(view)
