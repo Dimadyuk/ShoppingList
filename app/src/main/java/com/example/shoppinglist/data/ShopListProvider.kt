@@ -30,6 +30,9 @@ class ShopListProvider : ContentProvider() {
             GET_SHOP_ITEMS_QUERY -> {
 
             }
+            else ->{
+                return null
+            }
         }
         Log.d("ShopListProvider", "query $p0 code $code")
         return null
