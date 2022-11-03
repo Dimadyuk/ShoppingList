@@ -2,6 +2,7 @@ package com.example.shoppinglist.presentation
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -10,7 +11,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinglist.R
 import com.example.shoppinglist.databinding.ActivityMainBinding
+import com.example.shoppinglist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
@@ -48,13 +51,31 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
         }
 
-        contentResolver.query(
-            Uri.parse("content://com.example.shoppinglist/shop_items/1"),
-            null,
-            null,
-            null,
-            null,
-        )
+        thread {
+            val cursor = contentResolver.query(
+                Uri.parse("content://com.example.shoppinglist/shop_items"),
+                null,
+                null,
+                null,
+                null,
+            )
+            while (cursor?.moveToNext() == true) {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+                val shopItem = ShopItem(
+                    id = id,
+                    name = name,
+                    count = count,
+                    enabled = enabled
+                )
+                Log.d("MainActivity", shopItem.toString())
+            }
+
+            cursor?.close()
+        }
+
     }
 
     override fun onEditingFinished() {
